@@ -1,0 +1,7 @@
+[theme]
+font = "monospace"
+headingFont = "monospace"
+codeFont = "monospace"
+backgroundColor="#111010"
+secondaryBackgroundColor = "#1f1d1a"
+textColor = "#c6c6c7"
