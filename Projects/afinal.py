@@ -17,11 +17,11 @@ phone = "https://cdn.discordapp.com/attachments/1299848186181193788/149749737250
 placeholder = st.empty()
 
 dialogue = [
-    {"image": bg, "person": "You", "text": "*You enter a convenience store.*", "chat": False},
-    {"image": bg, "person": "You", "text": "Wow, this is a big store! But where is the cashier?", "chat": False},
-    {"image": standing, "person": "You", "text": "!!", "chat": False},
-    {"image": standing, "person": "Cashier", "text": "Hey! How's it going?", "chat": False},
-    {"image": standing, "person": "You", "text": "How's my... uh... my...", "chat": True}
+    {"image": bg, "person": "**You**", "text": "*You enter a convenience store.*", "chat": False},
+    {"image": bg, "person": "**You**", "text": "Wow, this is a big store! But where is the cashier?", "chat": False},
+    {"image": standing, "person": "**You**", "text": "!!", "chat": False},
+    {"image": standing, "person": "**Cashier**", "text": "Hey! How's it going?", "chat": False},
+    {"image": standing, "person": "**You**", "text": "How's my... uh... my...", "chat": True}
     ]
 
 if "index" not in st.session_state:
@@ -32,6 +32,9 @@ if "mode" not in st.session_state:
 
 if "chat" not in st.session_state:
     st.session_state.chat = False
+
+if "last_typed" not in st.session_state:
+    st.session_state.last_typed = -1
 
 luck = random.randint(1,6)
 desc = ""
@@ -94,9 +97,8 @@ def main_menu():
 
 
 def chat():
+    st.markdown('<div style="page-break-after: always;"></div>', unsafe_allow_html=True)
     with st.container(border=True):
-        st.markdown('<div style="page-break-after: always;"></div>', unsafe_allow_html=True)
-
         col1, col2, col3 = st.columns([1,2,1])
 
         with col2:
@@ -126,26 +128,39 @@ def chat():
         if st.button("return"):
             st.session_state.mode = "game"
             st.session_state.chat = False
+            st.session_state.index += 1
             st.rerun()
             
 def game(dialogue):
-    st.markdown('<div style="page-break-after: always;"></div>', unsafe_allow_html=True)
-    for scene in dialogue:
-        with placeholder.container():
-            st.image(scene["image"])
-            st.write(scene["person"])
+    if st.session_state.index >= len(dialogue):
+        st.session_state.mode = "intro"
+        st.rerun()
+
+    scene = dialogue[st.session_state.index]
+    st.image(scene["image"],use_container_width=True)
+
+    with st.container(border=True):
+        st.write(scene["person"])
+
+        if st.session_state.last_typed != st.session_state.index:
             st.write_stream(typewrite(scene["text"]))
-            if scene["chat"] == True:
+            st.session_state.last_typed = st.session_state.index
+        else:
+            st.write(scene["text"])
+
+        if scene["chat"] == True:
+            col1, col2 = st.columns([3,1])
+            with col2:
                 if st.button("USE CHATGPT"):
                     st.session_state.mode = "chat"
                     st.rerun()
-            else:
-                if st.button("NEXT"):
+        else:
+            col1, col2 = st.columns([10,1])
+            with col2:
+                if st.button(">"):
                     st.session_state.index += 1
-                if st.session_state.index >= len(dialogue):
-                    st.session_state.index = len(dialogue) - 1
-                st.rerun()
-        time.sleep(2)
+                    st.rerun()
+
 # ================================================
 # GAME FLOW
 # ================================================
