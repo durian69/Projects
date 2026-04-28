@@ -6,22 +6,29 @@ import time
 
 # client = OpenAI(api_key=st.secrets["KEY"])
 st_yled.init()
-
+st.set_page_config(layout="wide")
 # ================================================
 # VARIABLES
 # ================================================
 bg = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497368072028212/IMG_4891.png?ex=69f1085a&is=69efb6da&hm=5d9aec36dbef521b3efe5c4d8b90325d89484b54d056ffa80e367f8aa09b5513&"
 standing = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497379732197526/IMG_4890.png?ex=69f1085d&is=69efb6dd&hm=cfc1785d6ba2948842d1ebf0b039c5542877f06a6e10c2e9e99b38af02cdcc45&"
-phone = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497372505280572/IMG_4892.png?ex=69f1085b&is=69efb6db&hm=5bc607b6c6e81fb1f6c23288714f29840c0a383ad0a05235714ca00a3f67fcdd&"
-
-placeholder = st.empty()
+phone = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497372505280572/IMG_4892.png?ex=69f259db&is=69f1085b&hm=c099143ff1ba619e926be62de099546cd9da8901aa10a9deaf05b1446427f608&"
 
 dialogue = [
     {"image": bg, "person": "**You**", "text": "*You enter a convenience store.*", "chat": False},
     {"image": bg, "person": "**You**", "text": "Wow, this is a big store! But where is the cashier?", "chat": False},
     {"image": standing, "person": "**You**", "text": "!!", "chat": False},
     {"image": standing, "person": "**Cashier**", "text": "Hey! How's it going?", "chat": False},
-    {"image": standing, "person": "**You**", "text": "How's my... uh... my...", "chat": True}
+    {"image": standing, "person": "**You**", "text": "How's my... uh... my...", "chat": True},
+    {"image": standing, "person": "**You**", "text": "My day was good.", "chat": False},
+    {"image": standing, "person": "**Cashier**", "text": "Oh! Well...", "chat": False},
+    {"image": phone, "person": "", "text": "...", "chat": False},
+    {"image": phone, "person": "**You**", "text": "*Is this cashier going on ChatGPT?*", "chat": False},
+    {"image": phone, "person": "**You**", "text": "*Wow... I can't imagine relying on ChatGPT for everything.*", "chat": False},
+    {"image": phone, "person": "**You**", "text": "*I mean, this guy is literally a cashier...*", "chat": False},
+    {"image": standing, "person": "**Cashier**", "text": "... Is there anything I can help you with today?", "chat": False},
+    {"image": standing, "person": "**You**", "text": "*Gulp* Uh...", "chat": True},
+    {"image": standing, "person": "**You**", "text": "I need a skibidi", "chat": False}
     ]
 
 if "index" not in st.session_state:
@@ -84,6 +91,9 @@ def main_menu():
             st_yled.title("CASHIER.AI", font_size="50px")
             st.write(f"{desc}")
             if st.button("PLAY", use_container_width=True):
+                st.session_state.index = 0
+                st.session_state.last_typed = -1
+                st.session_state.chat = False
                 st.session_state.mode = "game"
                 st.rerun()
                 
@@ -97,7 +107,6 @@ def main_menu():
 
 
 def chat():
-    st.markdown('<div style="page-break-after: always;"></div>', unsafe_allow_html=True)
     with st.container(border=True):
         col1, col2, col3 = st.columns([1,2,1])
 
@@ -132,6 +141,9 @@ def chat():
             st.rerun()
             
 def game(dialogue):
+    if st.session_state.mode != "game":
+        return
+
     if st.session_state.index >= len(dialogue):
         st.session_state.mode = "intro"
         st.rerun()
@@ -151,9 +163,7 @@ def game(dialogue):
         if scene["chat"] == True:
             col1, col2 = st.columns([3,1])
             with col2:
-                if st.button("USE CHATGPT"):
-                    st.session_state.mode = "chat"
-                    st.rerun()
+                st.button("USE CHATGPT", on_click=go_to_chat)
         else:
             col1, col2 = st.columns([10,1])
             with col2:
@@ -161,17 +171,25 @@ def game(dialogue):
                     st.session_state.index += 1
                     st.rerun()
 
+def go_to_chat():
+    st.session_state.mode = "chat"
+    st.session_state.last_typed = -1
+    placeholder.empty()
+
 # ================================================
 # GAME FLOW
 # ================================================
 
-if st.session_state.mode == "intro":
-    main_menu()
-elif st.session_state.mode == "abt":
-    abt()
-elif st.session_state.mode == "exit":
-    exit()
-elif st.session_state.mode == "chat":
-    chat()
-elif st.session_state.mode == "game":
-    game(dialogue)
+placeholder = st.empty()
+
+with placeholder.container():
+    if st.session_state.mode == "intro":
+        main_menu()
+    elif st.session_state.mode == "abt":
+        abt()
+    elif st.session_state.mode == "exit":
+        exit()
+    elif st.session_state.mode == "chat":
+        chat()
+    elif st.session_state.mode == "game":
+        game(dialogue)
