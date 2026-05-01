@@ -215,7 +215,6 @@ def game(dialogue):
             st.write(scene["text"])
             time.sleep(0.2)
             
-        disable = not full_text
 
         if scene["chat"] == True:
             col1, col2 = st.columns([3,1])
@@ -226,7 +225,7 @@ def game(dialogue):
         else:
             col1, col2 = st.columns([10,1])
             with col2:
-                if st.button(">", disabled=disable):
+                if st.button(">", disabled=not full_text):
                     st.session_state.index += 1
                     st.rerun()
 
