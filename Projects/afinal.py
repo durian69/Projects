@@ -59,6 +59,9 @@ if "last_typed" not in st.session_state:
 if "prompt" not in st.session_state:
     st.session_state.prompt = 0
 
+if "not_printed" not in st.session_state:
+    st.session_state.not_printed = True
+
 
 system_prompt = "You are an AI model whose job is to give helpful advice to users. Provide brief suggestions, about 1-2 sentences, to help users with their problems. When asked to respond in JSON, use this template:"
 
@@ -106,6 +109,7 @@ def typewrite(text):
     for char in text:
         yield char
         time.sleep(0.03)
+        
 
 def abt():
     with st.container(border=True):
@@ -193,46 +197,60 @@ def chat():
             if st.button("return"):
                 st.session_state.mode = "game"
                 st.session_state.chat = False
+                st.session_state.prompt += 1
                 st.session_state.index += 1
                 st.rerun()
 
-            
-def game(dialogue):
-    if st.session_state.index >= len(dialogue):
-        st.session_state.mode = "intro"
-        st.rerun()
+def next_scene():
+    if st.session_state.not_printed:
+        return
 
-    scene = dialogue[st.session_state.index]
-    st.image(scene["image"],use_container_width=True)
-
-    with st.container(border=True):
-        st.write(scene["person"])
-
-        if st.session_state.last_typed != st.session_state.index:
-            full_text = st.write_stream(typewrite(scene["text"]))
-            st.session_state.last_typed = st.session_state.index
-        else:
-            st.write(scene["text"])
-            time.sleep(0.2)
-            
-
-        if scene["chat"] == True:
-            col1, col2 = st.columns([3,1])
-            with col2:
-                if st.session_state.index < 5:
-                    st.session_state.prompt += 1
-                st.button("USE CHETGPT", on_click=go_to_chat)
-        else:
-            col1, col2 = st.columns([10,1])
-            with col2:
-                if st.button(">", disabled=not full_text):
-                    st.session_state.index += 1
-                    st.rerun()
+    st.session_state.index += 1
+    st.session_state.not_printed = True
 
 def go_to_chat():
     st.session_state.mode = "chat"
     st.session_state.last_typed = -1
     placeholder.empty()
+
+def game(dialogue):
+    scene = dialogue[st.session_state.index]
+
+    st.image(scene["image"], use_container_width=True)
+
+    with st.container(border=True):
+        st.write(scene["person"])
+
+        text = st.empty()
+        button = st.empty()
+
+        if scene["chat"] == True:
+            with button:
+                col1, col2 = st.columns([3, 1])
+                with col2:
+                    st.button("USE CHETGPT", disabled=st.session_state.not_printed, on_click=go_to_chat)
+        else:
+            with button:
+                col1, col2 = st.columns([10, 1])
+                with col2:
+                    st.button(">", disabled=st.session_state.not_printed, on_click=next_scene)
+
+        if st.session_state.last_typed != st.session_state.index:
+            st.session_state.not_printed = True
+
+            with text:
+                st.write_stream(typewrite(scene["text"]))
+
+            st.session_state.last_typed = st.session_state.index
+            st.session_state.not_printed = False
+            st.rerun()
+
+        else:
+            with text:
+                st.write(scene["text"])
+
+            st.session_state.not_printed = False
+
 
 # ================================================
 # GAME FLOW
