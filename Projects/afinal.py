@@ -148,16 +148,14 @@ def main_menu():
                 st.rerun()
 
 def ai():
-    # response = client.chat.completions.create(
-    #     model="gpt-4o",
-    #     messages=[
-    #         {"role": "system", "content": system_prompt},
-    #         {"role": "user", "content": ai_prompt}
-    #     ]
-    # )
-    # return response.choices[0].message.content
-    return "a"
-
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": ai_prompt}
+        ]
+    )
+    return response.choices[0].message.content
 
 
 def chat():
