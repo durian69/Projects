@@ -127,7 +127,6 @@ def exit():
 
 def main_menu():
     with st.container(border=True):
-        st.write(len(dialogue))
         col1, col2, col3 = st.columns([1,2,1])
 
         with col2:
@@ -149,14 +148,15 @@ def main_menu():
                 st.rerun()
 
 def ai():
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": ai_prompt}
-        ]
-    )
-    return response.choices[0].message.content
+    # response = client.chat.completions.create(
+    #     model="gpt-4o",
+    #     messages=[
+    #         {"role": "system", "content": system_prompt},
+    #         {"role": "user", "content": ai_prompt}
+    #     ]
+    # )
+    # return response.choices[0].message.content
+    return "a"
 
 
 
@@ -217,7 +217,7 @@ def go_to_chat():
 def game(dialogue):
     if st.session_state.index == len(dialogue):
         st.session_state.mode = "intro"
-        st.rerun
+        st.rerun()
     else:
         scene = dialogue[st.session_state.index]
 
@@ -225,7 +225,6 @@ def game(dialogue):
 
         with st.container(border=True):
             st.write(scene["person"])
-            st.write(st.session_state.index)
 
             text = st.empty()
             button = st.empty()
