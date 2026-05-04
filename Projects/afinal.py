@@ -1,17 +1,18 @@
 import streamlit as st
-# from openai import OpenAI
+from openai import OpenAI
 import st_yled
 import random
 import time
 
-# client = OpenAI(api_key=st.secrets["KEY"])
+client = OpenAI(api_key=st.secrets["KEY"])
+
 st_yled.init()
 # ================================================
 # VARIABLES
 # ================================================
-bg = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497368072028212/IMG_4891.png?ex=69f1085a&is=69efb6da&hm=5d9aec36dbef521b3efe5c4d8b90325d89484b54d056ffa80e367f8aa09b5513&"
-standing = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497379732197526/IMG_4890.png?ex=69f64e5d&is=69f4fcdd&hm=34c228ba11c93136a9d7bc220d7d4f43e885e2b352df3bb8109cb81e4e8ce089&"
-phone = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497372505280572/IMG_4892.png?ex=69f64e5b&is=69f4fcdb&hm=ce7d497d80204eb54c3ce12f33aff159f5cc38e1607a8d66c15b88c717db38e1&"
+bg = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497368072028212/IMG_4891.png?ex=69fa42da&is=69f8f15a&hm=b66442c7d60f77c70f7daec80e9b566e92e653bb89962df309e39043ed6c93c5&"
+standing = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497379732197526/IMG_4890.png?ex=69fa42dd&is=69f8f15d&hm=9431ddae1a0c994dfc415e660bbe79dddb0923cb17ae0830a2a38c3e3f3842c3&"
+phone = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497372505280572/IMG_4892.png?ex=69fa42db&is=69f8f15b&hm=ed291b34da33e141f30a2159071dcaf95f68ef5ff7805e9fcd3a995eeca5e617&"
 
 dialogue = [
     {"image": bg, "person": "**You**", "text": "*You enter a convenience store.*", "chat": False},
@@ -33,7 +34,7 @@ dialogue = [
     {"image": standing, "person": "**You**", "text": "Uh...", "chat": True},
     {"image": standing, "person": "**You**", "text": "*Huh??? Is this guy really that dangerous?*", "chat": False},
     {"image": standing, "person": "**You**", "text": "*I should call the police... But...*", "chat": True},
-    {"image": standing, "person": "**You**", "text": "*You call dial 911.*", "chat": False},
+    {"image": standing, "person": "**You**", "text": "*You dial 911.*", "chat": False},
     {"image": standing, "person": "**You**", "text": "Police... Help...", "chat": False},
     {"image": standing, "person": "**Police**", "text": " No problem. Can you please provide me with the address at which you are experiencing this emergency?", "chat": False},
     {"image": standing, "person": "**You**", "text": "Uhhh... What kind of address?", "chat": False},
@@ -126,7 +127,7 @@ def exit():
 
 def main_menu():
     with st.container(border=True):
-
+        st.write(len(dialogue))
         col1, col2, col3 = st.columns([1,2,1])
 
         with col2:
@@ -151,12 +152,12 @@ def ai():
     # response = client.chat.completions.create(
     #     model="gpt-4o",
     #     messages=[
-    #         {"role": "system", "content": system_prompt}
+    #         {"role": "system", "content": system_prompt},
     #         {"role": "user", "content": ai_prompt}
     #     ]
     # )
-    # return (response.choices[0].message.content)
-    return ai_prompt
+    # return response.choices[0].message.content
+    return "a"
 
 
 def chat():
@@ -214,43 +215,47 @@ def go_to_chat():
     placeholder.empty()
 
 def game(dialogue):
-    scene = dialogue[st.session_state.index]
+    if st.session_state.index == len(dialogue):
+        st.session_state.mode = "intro"
+        st.rerun
+    else:
+        scene = dialogue[st.session_state.index]
 
-    st.image(scene["image"], use_container_width=True)
+        st.image(scene["image"], use_container_width=True)
 
-    with st.container(border=True):
-        st.write(scene["person"])
+        with st.container(border=True):
+            st.write(scene["person"])
+            st.write(st.session_state.index)
 
-        text = st.empty()
-        button = st.empty()
+            text = st.empty()
+            button = st.empty()
 
-        if scene["chat"] == True:
-            with button:
-                col1, col2 = st.columns([3, 1])
-                with col2:
-                    st.button("USE CHETGPT", disabled=st.session_state.not_printed, on_click=go_to_chat)
-        else:
-            with button:
-                col1, col2 = st.columns([10, 1])
-                with col2:
-                    st.button(">", disabled=st.session_state.not_printed, on_click=next_scene)
+            if scene["chat"] == True:
+                with button:
+                    col1, col2 = st.columns([3, 1])
+                    with col2:
+                        st.button("USE CHETGPT", disabled=st.session_state.not_printed, on_click=go_to_chat)
+            else:
+                with button:
+                    col1, col2 = st.columns([10, 1])
+                    with col2:
+                        st.button(">", disabled=st.session_state.not_printed, on_click=next_scene)
 
-        if st.session_state.last_typed != st.session_state.index:
-            st.session_state.not_printed = True
+            if st.session_state.last_typed != st.session_state.index:
+                st.session_state.not_printed = True
 
-            with text:
-                st.write_stream(typewrite(scene["text"]))
+                with text:
+                    st.write_stream(typewrite(scene["text"]))
 
-            st.session_state.last_typed = st.session_state.index
-            st.session_state.not_printed = False
-            st.rerun()
+                st.session_state.last_typed = st.session_state.index
+                st.session_state.not_printed = False
+                st.rerun()
 
-        else:
-            with text:
-                st.write(scene["text"])
+            else:
+                with text:
+                    st.write(scene["text"])
 
-            st.session_state.not_printed = False
-
+                st.session_state.not_printed = False
 
 # ================================================
 # GAME FLOW
