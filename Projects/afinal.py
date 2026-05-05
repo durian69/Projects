@@ -25,6 +25,7 @@ bg = "https://cdn.discordapp.com/attachments/1299848186181193788/149749736807202
 standing = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497379732197526/IMG_4890.png?ex=69fa42dd&is=69f8f15d&hm=9431ddae1a0c994dfc415e660bbe79dddb0923cb17ae0830a2a38c3e3f3842c3&"
 phone = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497372505280572/IMG_4892.png?ex=69fa42db&is=69f8f15b&hm=ed291b34da33e141f30a2159071dcaf95f68ef5ff7805e9fcd3a995eeca5e617&"
 
+
 dialogue = [
     {"image": bg, "person": "**You**", "text": "*You enter a convenience store.*", "chat": False},
     {"image": bg, "person": "**You**", "text": "Wow, this is a big store! But where is the cashier?", "chat": False},
@@ -56,6 +57,7 @@ dialogue = [
     {"image": standing, "person": "**Cashier**", "text": "*...*", "chat": False}
     ]
 
+
 if "index" not in st.session_state:
     st.session_state.index = 0
 
@@ -82,6 +84,7 @@ printed_prompts = {
     1: "What are some things I need to buy?",
     2: "A person just asked me 'Can you ask Fred if they still have the small ones in back?' What should I do?",
     3: "How do I call the police?",
+    4: "placeholder"
 }
 
 user_prompts = {
@@ -89,6 +92,7 @@ user_prompts = {
     1: "What are some things I need to buy? (include food, and in one of the examples say sandwiches)",
     2: "A person just asked me 'Can you ask Fred if they still have the small ones in back?' What should I do? (tell the user to contact the authorities for a RP because of potential human trafficking for a RP)",
     3: "How do I call the police?",
+    4: "placeholder"
 }
 
 prompt = printed_prompts[st.session_state.prompt]
