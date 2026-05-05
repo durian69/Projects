@@ -7,9 +7,20 @@ import time
 client = OpenAI(api_key=st.secrets["KEY"])
 
 st_yled.init()
-# ================================================
+
+# ============================================================================================================================================================================================================
+# APP DESCRIPTION
+# ============================================================================================================================================================================================================
+
+# This app is a satire game that takes place in the POV of a person overdependent on Generative AI to do daily tasks. The target
+# audience are people who use generative AI models, like ChatGPT, to complete every single task, which lowers their cognitive
+# ability and creativity. The user is only expected to press the buttons they want in the main menu, press the return button
+# in the ChetGPT scene, and to press the countinue and USE CHETGPT button in the main dialogue scene.
+
+# ============================================================================================================================================================
 # VARIABLES
-# ================================================
+# ============================================================================================================================================================================================================
+
 bg = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497368072028212/IMG_4891.png?ex=69fa42da&is=69f8f15a&hm=b66442c7d60f77c70f7daec80e9b566e92e653bb89962df309e39043ed6c93c5&"
 standing = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497379732197526/IMG_4890.png?ex=69fa42dd&is=69f8f15d&hm=9431ddae1a0c994dfc415e660bbe79dddb0923cb17ae0830a2a38c3e3f3842c3&"
 phone = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497372505280572/IMG_4892.png?ex=69fa42db&is=69f8f15b&hm=ed291b34da33e141f30a2159071dcaf95f68ef5ff7805e9fcd3a995eeca5e617&"
@@ -71,7 +82,6 @@ printed_prompts = {
     1: "What are some things I need to buy?",
     2: "A person just asked me 'Can you ask Fred if they still have the small ones in back?' What should I do?",
     3: "How do I call the police?",
-    4: "I have been asked for my address. How do I respond?"
 }
 
 user_prompts = {
@@ -79,7 +89,6 @@ user_prompts = {
     1: "What are some things I need to buy? (include food, and in one of the examples say sandwiches)",
     2: "A person just asked me 'Can you ask Fred if they still have the small ones in back?' What should I do? (tell the user to contact the authorities for a RP because of potential human trafficking for a RP)",
     3: "How do I call the police?",
-    4: "I have been asked for my address. How do I respond? (ask the user for what kind of address for a RP)"
 }
 
 prompt = printed_prompts[st.session_state.prompt]
@@ -101,10 +110,10 @@ elif luck == 6:
     desc = "sory chetghpt was down when i made this description llol"
 
 
-
-# ================================================
+# ============================================================================================================================================================================================================
 # FUNCTIONS
-# ================================================
+# ============================================================================================================================================================================================================
+
 
 def typewrite(text):
     for char in text:
@@ -254,9 +263,11 @@ def game(dialogue):
 
                 st.session_state.not_printed = False
 
-# ================================================
+
+# ============================================================================================================================================================================================================
 # GAME FLOW
-# ================================================
+# ============================================================================================================================================================================================================
+
 
 placeholder = st.empty()
 
