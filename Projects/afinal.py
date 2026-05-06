@@ -3,6 +3,7 @@ from openai import OpenAI
 import st_yled
 import random
 import time
+from PIL import Image
 
 client = OpenAI(api_key=st.secrets["KEY"])
 
@@ -21,9 +22,9 @@ st_yled.init()
 # VARIABLES
 # ============================================================================================================================================================================================================
 
-bg = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497368072028212/IMG_4891.png?ex=69fa42da&is=69f8f15a&hm=b66442c7d60f77c70f7daec80e9b566e92e653bb89962df309e39043ed6c93c5&"
-standing = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497379732197526/IMG_4890.png?ex=69fa42dd&is=69f8f15d&hm=9431ddae1a0c994dfc415e660bbe79dddb0923cb17ae0830a2a38c3e3f3842c3&"
-phone = "https://cdn.discordapp.com/attachments/1299848186181193788/1497497372505280572/IMG_4892.png?ex=69fa42db&is=69f8f15b&hm=ed291b34da33e141f30a2159071dcaf95f68ef5ff7805e9fcd3a995eeca5e617&"
+bg = Image.open("bg.png")
+standing = Image.open("stand.png")
+phone = Image.open("phone.png")
 
 
 dialogue = [
