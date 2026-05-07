@@ -6,8 +6,8 @@ import time
 from PIL import Image
 
 client = OpenAI(api_key=st.secrets["KEY"])
-
 st_yled.init()
+st.set_page_config(layout="wide")
 
 # ============================================================================================================================================================================================================
 # APP DESCRIPTION
@@ -127,12 +127,15 @@ def typewrite(text):
         
 
 def abt():
-    with st.container(border=True):
-        st.write("In Cashier.AI, you enter a convenience store, like any other day. Of course, you decide to let generative AI help with daily tasks. It's not like you need AI to do everything in your life; it's just a tool, right?")
-        st.markdown("*Note: Using Generative AI as a learning tool to collect information easily, automating repetitive tasks, summarizing long contents, etc, are not bad. What this application is targeting is how people start using Generative AI as a crutch instead of a growing tool, losing their creativity and independence in the process.*")
-    if st.button("RETURN TO MAIN MENU"):
-        st.session_state.mode = "intro"
-        st.rerun()
+    column1, column2, column3 = st.columns([1,2,1])
+
+    with column2:
+        with st.container(border=True, width=1000):
+            st.write("In Cashier.AI, you enter a convenience store, like any other day. Of course, you decide to let generative AI help with daily tasks. It's not like you need AI to do everything in your life; it's just a tool, right?")
+            st.markdown("*Note: Using Generative AI as a learning tool to collect information easily, automating repetitive tasks, summarizing long contents, etc, are not bad. What this application is targeting is how people start using Generative AI as a crutch instead of a growing tool, losing their creativity and independence in the process.*")
+        if st.button("RETURN TO MAIN MENU"):
+            st.session_state.mode = "intro"
+            st.rerun()
 
 def exit():
     col1, col2, col3 = st.columns([1,3,1])
@@ -140,26 +143,29 @@ def exit():
         st.title("Thanks for Playing! :D")
 
 def main_menu():
-    with st.container(border=True):
-        col1, col2, col3 = st.columns([1,2,1])
+    column1, column2, column3 = st.columns([1,2,1])
 
-        with col2:
-            st_yled.title("CASHIER.AI", font_size="50px")
-            st.write(f"{desc}")
-            if st.button("PLAY", use_container_width=True):
-                st.session_state.index = 0
-                st.session_state.last_typed = -1
-                st.session_state.chat = False
-                st.session_state.mode = "game"
-                st.rerun()
-                
-            if st.button("ABOUT", use_container_width=True):
-                st.session_state.mode = "abt"
-                st.rerun()
+    with column2:
+        with st_yled.container(border=True, width=1000, border_color="#3d423d", background_color="#0E110F"):
+            col1, col2, col3 = st.columns([0.5,2,0.5])
 
-            if st.button("EXIT", use_container_width=True):
-                st.session_state.mode = "exit"
-                st.rerun()
+            with col2:
+                st_yled.title("CASHIER.AI", font_size="62px", color="#859482", font_weight="black")
+                st.write(f"{desc}")
+                if st.button("PLAY", use_container_width=True):
+                    st.session_state.index = 0
+                    st.session_state.last_typed = -1
+                    st.session_state.chat = False
+                    st.session_state.mode = "game"
+                    st.rerun()
+                    
+                if st.button("ABOUT", use_container_width=True):
+                    st.session_state.mode = "abt"
+                    st.rerun()
+
+                if st.button("EXIT", use_container_width=True):
+                    st.session_state.mode = "exit"
+                    st.rerun()
 
 def ai():
     response = client.chat.completions.create(
@@ -232,41 +238,42 @@ def game(dialogue):
         st.rerun()
     else:
         scene = dialogue[st.session_state.index]
+        col1, col2, col3 = st.columns([0.5,2,0.5])
+        with col2:
+            with st_yled.container(border=True, border_color="#3d423d", background_color="#0E110F"):
+                st.image(scene["image"], width=900)
+                with st_yled.container(border=True, background_color="#131718", border_color="#3d423d", border_width="2px", width=900):
+                    st_yled.write(scene["person"], color="#859482", font_weight="black", font_size="20px")
 
-        st.image(scene["image"], use_container_width=True)
+                    text = st.empty()
+                    button = st.empty()
 
-        with st.container(border=True):
-            st.write(scene["person"])
+                    if scene["chat"] == True:
+                        with button:
+                            col1, col2 = st.columns([4, 1])
+                            with col2:
+                                st.button("USE CHETGPT", disabled=st.session_state.not_printed, on_click=go_to_chat)
+                    else:
+                        with button:
+                            col1, col2 = st.columns([10, 1])
+                            with col2:
+                                st.button(">", disabled=st.session_state.not_printed, on_click=next_scene)
 
-            text = st.empty()
-            button = st.empty()
+                    if st.session_state.last_typed != st.session_state.index:
+                        st.session_state.not_printed = True
 
-            if scene["chat"] == True:
-                with button:
-                    col1, col2 = st.columns([3, 1])
-                    with col2:
-                        st.button("USE CHETGPT", disabled=st.session_state.not_printed, on_click=go_to_chat)
-            else:
-                with button:
-                    col1, col2 = st.columns([10, 1])
-                    with col2:
-                        st.button(">", disabled=st.session_state.not_printed, on_click=next_scene)
+                        with text:
+                            st.write_stream(typewrite(scene["text"]))
 
-            if st.session_state.last_typed != st.session_state.index:
-                st.session_state.not_printed = True
+                        st.session_state.last_typed = st.session_state.index
+                        st.session_state.not_printed = False
+                        st.rerun()
 
-                with text:
-                    st.write_stream(typewrite(scene["text"]))
+                    else:
+                        with text:
+                            st.write(scene["text"])
 
-                st.session_state.last_typed = st.session_state.index
-                st.session_state.not_printed = False
-                st.rerun()
-
-            else:
-                with text:
-                    st.write(scene["text"])
-
-                st.session_state.not_printed = False
+                        st.session_state.not_printed = False
 
 
 # ============================================================================================================================================================================================================
