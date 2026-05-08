@@ -146,7 +146,7 @@ def main_menu():
     column1, column2, column3 = st.columns([1,2,1])
 
     with column2:
-        with st_yled.container(border=True, width=1000, border_color="#3d423d", background_color="#0E110F"):
+        with st_yled.container(border=True, width=1500, border_color="#3d423d", background_color="#0E110F"):
             col1, col2, col3 = st.columns([0.5,2,0.5])
 
             with col2:
@@ -168,57 +168,61 @@ def main_menu():
                     st.rerun()
 
 def ai():
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": ai_prompt}
-        ]
-    )
-    return response.choices[0].message.content
+    # response = client.chat.completions.create(
+    #     model="gpt-4o",
+    #     messages=[
+    #         {"role": "system", "content": system_prompt},
+    #         {"role": "user", "content": ai_prompt}
+    #     ]
+    # )
+    # return response.choices[0].message.content
+    return "ke"
 
 
 def chat():
-    with st.container(border=True):
-        col1, col2, col3 = st.columns([1,2,1])
+    col1, col2, col3 = st.columns([0.5,2,0.5])
 
-        with col2:
-            st_yled.title("‎ChetGPT", font_size="70px")
+    with col2:
+        with st.container(border=True):
+            col1, col2, col3 = st.columns([1,2,1])
 
-        st.markdown("---")
-        if st.session_state.index > 20:
-            st.error("ChetGPT is currently experiencing exceptionally high demand. Please hold on or try back in a few minutes.")
-            if st.button("return"):
-                st.session_state.mode = "game"
-                st.session_state.chat = False
-                st.session_state.index += 1
-                st.rerun()
-        else:
-            if st.session_state.chat == False:
-                time.sleep(1)
-                with st.chat_message("human"):
-                    human_text = prompt
-                    st.write_stream(typewrite(human_text))
+            with col2:
+                st_yled.title("‎ChetGPT", font_size="70px")
 
-                time.sleep(1)
-                with st.chat_message("ai"):
-                    ai_text = ai()
-                    st.write_stream(typewrite(ai_text))
-                st.session_state.chat = True
+            st.markdown("---")
+            if st.session_state.index > 20:
+                st.error("ChetGPT is currently experiencing exceptionally high demand. Please hold on or try back in a few minutes.")
+                if st.button("return"):
+                    st.session_state.mode = "game"
+                    st.session_state.chat = False
+                    st.session_state.index += 1
+                    st.rerun()
             else:
-                human_text = st.chat_message("human")
-                human_text.write(prompt)
+                if st.session_state.chat == False:
+                    time.sleep(1)
+                    with st.chat_message("human"):
+                        human_text = prompt
+                        st.write_stream(typewrite(human_text))
 
-                ai_text = st.chat_message("ai")
-                ai_text.write(ai_text)
+                    time.sleep(1)
+                    with st.chat_message("ai"):
+                        ai_text = ai()
+                        st.write_stream(typewrite(ai_text))
+                    st.session_state.chat = True
+                else:
+                    human_text = st.chat_message("human")
+                    human_text.write(prompt)
 
-                time.sleep(1)
-            if st.button("return"):
-                st.session_state.mode = "game"
-                st.session_state.chat = False
-                st.session_state.prompt += 1
-                st.session_state.index += 1
-                st.rerun()
+                    ai_text = st.chat_message("ai")
+                    ai_text.write(ai_text)
+
+                    time.sleep(1)
+                if st.button("return"):
+                    st.session_state.mode = "game"
+                    st.session_state.chat = False
+                    st.session_state.prompt += 1
+                    st.session_state.index += 1
+                    st.rerun()
 
 def next_scene():
     if st.session_state.not_printed:
