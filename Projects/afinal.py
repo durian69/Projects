@@ -22,9 +22,9 @@ st.set_page_config(layout="wide")
 # VARIABLES
 # ============================================================================================================================================================================================================
 
-bg = Image.open("bg.png")
-standing = Image.open("stand.png")
-phone = Image.open("phone.png")
+bg = Image.open("Projects/bg.png")
+standing = Image.open("Projects/stand.png")
+phone = Image.open("Projects/phone.png")
 
 
 dialogue = [
