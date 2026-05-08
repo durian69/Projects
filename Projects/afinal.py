@@ -22,9 +22,9 @@ st.set_page_config(layout="wide")
 # VARIABLES
 # ============================================================================================================================================================================================================
 
-bg = Image.open("bg.png")
-standing = Image.open("stand.png")
-phone = Image.open("phone.png")
+bg = Image.open("Projects/bg.png")
+standing = Image.open("Projects/stand.png")
+phone = Image.open("Projects/phone.png")
 
 
 dialogue = [
@@ -201,21 +201,19 @@ def chat():
                 if st.session_state.chat == False:
                     time.sleep(1)
                     with st.chat_message("human"):
-                        human_text = prompt
-                        st.write_stream(typewrite(human_text))
+                        st.write_stream(typewrite(prompt))
 
                     time.sleep(1)
                     with st.chat_message("ai"):
-                        ai_text = ai()
-                        st.write_stream(typewrite(ai_text))
+                        ai_response = ai()
+                        st.write_stream(typewrite(ai_response))
+                    st.session_state.last_ai_text = ai_response
                     st.session_state.chat = True
                 else:
-                    human_text = st.chat_message("human")
-                    human_text.write(prompt)
-
-                    ai_text = st.chat_message("ai")
-                    ai_text.write(ai_text)
-
+                    with st.chat_message("human"):
+                        st.write(prompt)
+                    with st.chat_message("ai"):
+                        st.write(st.session_state.get("last_ai_text", ""))
                     time.sleep(1)
                 if st.button("return"):
                     st.session_state.mode = "game"
