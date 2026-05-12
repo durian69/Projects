@@ -1,4 +1,5 @@
 import streamlit as st
+import openai
 from openai import OpenAI
 import st_yled
 import random
@@ -22,9 +23,9 @@ st.set_page_config(layout="wide")
 # VARIABLES
 # ============================================================================================================================================================================================================
 
-bg = Image.open("Projects/bg.png")
-standing = Image.open("Projects/stand.png")
-phone = Image.open("Projects/phone.png")
+bg = Image.open("bg.png")
+standing = Image.open("stand.png")
+phone = Image.open("phone.png")
 
 
 dialogue = [
@@ -78,7 +79,7 @@ if "not_printed" not in st.session_state:
     st.session_state.not_printed = True
 
 
-system_prompt = "You are an AI model whose job is to give helpful advice to users. Provide brief suggestions, about 1-2 sentences, to help users with their problems. When asked to respond in JSON, use this template:"
+system_prompt = "You are an AI model whose job is to give helpful advice to users. Provide brief suggestions, about 1-2 sentences, to help users with their problems."
 
 printed_prompts = {
     0: "A cashier just asked me how my day has been. How do I respond?",
@@ -132,6 +133,7 @@ def abt():
     with column2:
         with st.container(border=True, width=1000):
             st.write("In Cashier.AI, you enter a convenience store, like any other day. Of course, you decide to let generative AI help with daily tasks. It's not like you need AI to do everything in your life; it's just a tool, right?")
+            st.write("Press play to start the game!")
             st.markdown("*Note: Using Generative AI as a learning tool to collect information easily, automating repetitive tasks, summarizing long contents, etc, are not bad. What this application is targeting is how people start using Generative AI as a crutch instead of a growing tool, losing their creativity and independence in the process.*")
         if st.button("RETURN TO MAIN MENU"):
             st.session_state.mode = "intro"
@@ -152,6 +154,7 @@ def main_menu():
             with col2:
                 st_yled.title("CASHIER.AI", font_size="62px", color="#859482", font_weight="black")
                 st.write(f"{desc}")
+                st.markdown("*Check 'About' for instructions!*")
                 if st.button("PLAY", use_container_width=True):
                     st.session_state.index = 0
                     st.session_state.last_typed = -1
@@ -167,16 +170,45 @@ def main_menu():
                     st.session_state.mode = "exit"
                     st.rerun()
 
+def reset():
+    st.session_state.index = 0
+    st.session_state.mode = "intro"
+    st.session_state.chat = False
+    st.session_state.last_typed = -1
+    st.session_state.prompt = 0
+    st.session_state.not_printed = True
+
 def ai():
-    # response = client.chat.completions.create(
-    #     model="gpt-4o",
-    #     messages=[
-    #         {"role": "system", "content": system_prompt},
-    #         {"role": "user", "content": ai_prompt}
-    #     ]
-    # )
-    # return response.choices[0].message.content
-    return "ke"
+    #I searched up the different errors for OpenAI, AI gave me them
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": ai_prompt}
+            ]
+        )
+        return response.choices[0].message.content
+    
+    except openai.RateLimitError:
+        reset()
+        return "Error: API request exceeded usage limits. Try again later!"
+    
+    except openai.AuthenticationError:
+        reset()
+        return "Error: Missing API key. Try again later!"
+    
+    except openai.APIConnectionError:
+        reset()
+        return "Error: Unstable network! Try again later!"
+    
+    except openai.APIError as e:
+        reset()
+        return "Error: OpenAI's servers are down! Try again later!"
+
+    except Exception as e:
+        reset()
+        return f"Error: Unknown error has occured: {e}. Try again later!"
 
 
 def chat():
@@ -206,6 +238,8 @@ def chat():
                     time.sleep(1)
                     with st.chat_message("ai"):
                         ai_response = ai()
+                        if ai_response is None:
+                            ai_response = "Error: ChetGPT did not return a response."
                         st.write_stream(typewrite(ai_response))
                     st.session_state.last_ai_text = ai_response
                     st.session_state.chat = True
@@ -215,7 +249,7 @@ def chat():
                     with st.chat_message("ai"):
                         st.write(st.session_state.get("last_ai_text", ""))
                     time.sleep(1)
-                if st.button("return"):
+                if st.button("RETURN TO GAME"):
                     st.session_state.mode = "game"
                     st.session_state.chat = False
                     st.session_state.prompt += 1
@@ -257,9 +291,9 @@ def game(dialogue):
                                 st.button("USE CHETGPT", disabled=st.session_state.not_printed, on_click=go_to_chat)
                     else:
                         with button:
-                            col1, col2 = st.columns([10, 1])
+                            col1, col2 = st.columns([13, 1])
                             with col2:
-                                st.button(">", disabled=st.session_state.not_printed, on_click=next_scene)
+                                st.button("\>", disabled=st.session_state.not_printed, on_click=next_scene)
 
                     if st.session_state.last_typed != st.session_state.index:
                         st.session_state.not_printed = True
