@@ -153,8 +153,8 @@ def main_menu():
 
             with col2:
                 st_yled.title("CASHIER.AI", font_size="62px", color="#859482", font_weight="black")
+                st_yled.markdown("*Check 'About' for instructions!*", color="#859482")
                 st.write(f"{desc}")
-                st.markdown("*Check 'About' for instructions!*")
                 if st.button("PLAY", use_container_width=True):
                     st.session_state.index = 0
                     st.session_state.last_typed = -1
@@ -239,7 +239,8 @@ def chat():
                     with st.chat_message("ai"):
                         ai_response = ai()
                         if ai_response is None:
-                            ai_response = "Error: ChetGPT did not return a response."
+                            ai_response = "Error: ChetGPT did not return a response. Try again later!"
+                            return()
                         st.write_stream(typewrite(ai_response))
                     st.session_state.last_ai_text = ai_response
                     st.session_state.chat = True
@@ -249,7 +250,7 @@ def chat():
                     with st.chat_message("ai"):
                         st.write(st.session_state.get("last_ai_text", ""))
                     time.sleep(1)
-                if st.button("RETURN TO GAME"):
+                if st.button("RETURN"):
                     st.session_state.mode = "game"
                     st.session_state.chat = False
                     st.session_state.prompt += 1
