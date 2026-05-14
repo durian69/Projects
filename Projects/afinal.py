@@ -1,3 +1,7 @@
+# ============================================================================================================================================================================================================
+# CASHIER.AI
+# ============================================================================================================================================================================================================
+
 import streamlit as st
 import openai
 from openai import OpenAI
@@ -23,9 +27,14 @@ st.set_page_config(layout="wide")
 # VARIABLES
 # ============================================================================================================================================================================================================
 
-bg = Image.open("Projects/bg.png")
-standing = Image.open("Projects/stand.png")
-phone = Image.open("Projects/phone.png")
+try:
+    bg = Image.open("Projects/bg.png")
+    standing = Image.open("Projects/stand.png")
+    phone = Image.open("Projects/phone.png")
+except FileNotFoundError:
+    bg = Image.open("bg.png")
+    standing = Image.open("stand.png")
+    phone = Image.open("phone.png")
 
 
 dialogue = [
@@ -117,15 +126,53 @@ elif luck == 6:
 
 
 # ============================================================================================================================================================================================================
-# FUNCTIONS
+# MINOR FUNCTIONS
 # ============================================================================================================================================================================================================
-
 
 def typewrite(text):
     for char in text:
         yield char
         time.sleep(0.03)
-        
+
+def exit():
+    col1, col2, col3 = st.columns([1,3,1])
+    with col2:
+        st.title("Thanks for Playing! :D")
+
+def reset():
+    st.session_state.index = 0
+    st.session_state.mode = "intro"
+    st.session_state.chat = False
+    st.session_state.last_typed = -1
+    st.session_state.prompt = 0
+    st.session_state.not_printed = True
+
+def return_chat():
+    st.session_state.mode = "game"
+    st.session_state.chat = False
+    st.session_state.prompt += 1
+    st.session_state.index += 1
+    st.session_state.last_typed = -1
+    st.session_state.not_printed = True
+    placeholder.empty()
+
+def next_scene():
+    if st.session_state.not_printed:
+        return
+
+    st.session_state.index += 1
+    st.session_state.not_printed = True
+
+def go_to_chat():
+    st.session_state.mode = "chat"
+    st.session_state.last_typed = -1
+    placeholder.empty()
+
+
+
+# ============================================================================================================================================================================================================
+# MAIN FUNCTIONS
+# ============================================================================================================================================================================================================
 
 def abt():
     column1, column2, column3 = st.columns([1,2,1])
@@ -139,10 +186,6 @@ def abt():
             st.session_state.mode = "intro"
             st.rerun()
 
-def exit():
-    col1, col2, col3 = st.columns([1,3,1])
-    with col2:
-        st.title("Thanks for Playing! :D")
 
 def main_menu():
     column1, column2, column3 = st.columns([1,2,1])
@@ -170,14 +213,6 @@ def main_menu():
                     st.session_state.mode = "exit"
                     st.rerun()
 
-def reset():
-    st.session_state.index = 0
-    st.session_state.mode = "intro"
-    st.session_state.chat = False
-    st.session_state.last_typed = -1
-    st.session_state.prompt = 0
-    st.session_state.not_printed = True
-
 def ai():
     #I searched up the different errors for OpenAI, AI gave me them
     try:
@@ -195,7 +230,6 @@ def ai():
         return "Error: API request exceeded usage limits. Try again later!"
     
     except openai.AuthenticationError:
-        reset()
         return "Error: Missing API key. Try again later!"
     
     except openai.APIConnectionError:
@@ -248,26 +282,11 @@ def chat():
                     with st.chat_message("human"):
                         st.write(prompt)
                     with st.chat_message("ai"):
-                        st.write(st.session_state.get("last_ai_text", ""))
+                        st.write(st.session_state.get("last_ai_text", "")) #ai helped me with this
                     time.sleep(1)
-                if st.button("RETURN"):
-                    st.session_state.mode = "game"
-                    st.session_state.chat = False
-                    st.session_state.prompt += 1
-                    st.session_state.index += 1
-                    st.rerun()
+                st.button("RETURN", on_click=return_chat)
+                
 
-def next_scene():
-    if st.session_state.not_printed:
-        return
-
-    st.session_state.index += 1
-    st.session_state.not_printed = True
-
-def go_to_chat():
-    st.session_state.mode = "chat"
-    st.session_state.last_typed = -1
-    placeholder.empty()
 
 def game(dialogue):
     if st.session_state.index == len(dialogue):
@@ -331,3 +350,7 @@ with placeholder.container():
         chat()
     elif st.session_state.mode == "game":
         game(dialogue)
+
+# ============================================================================================================================================================================================================
+# END :D
+# ============================================================================================================================================================================================================
