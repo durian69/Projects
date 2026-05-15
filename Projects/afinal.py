@@ -10,6 +10,15 @@ client = OpenAI(api_key=st.secrets["KEY"])
 st_yled.init()
 st.set_page_config(layout="wide")
 
+st.set_page_config(
+    page_title="Cashier.AI",   
+    menu_items={
+        'About': "# A dialogue based, satire game where the player enters a convenience store and uses ChetGPT to handle ordinary situations."
+    },
+    layout="wide"
+)
+
+
 # ============================================================================================================================================================================================================
 # APP DESCRIPTION
 # ============================================================================================================================================================================================================
