@@ -239,6 +239,7 @@ def ai():
         return "Error: API request exceeded usage limits. Try again later!"
     
     except openai.AuthenticationError:
+        reset()
         return "Error: Missing API key. Try again later!"
     
     except openai.APIConnectionError:
