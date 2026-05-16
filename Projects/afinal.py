@@ -225,37 +225,34 @@ def main_menu():
 def ai():
     #I searched up the different errors for OpenAI, AI gave me them
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": ai_prompt}
-            ]
-        )
-        return response.choices[0].message.content
+        # response = client.chat.completions.create(
+        #     model="gpt-4o",
+        #     messages=[
+        #         {"role": "system", "content": system_prompt},
+        #         {"role": "user", "content": ai_prompt}
+        #     ]
+        # )
+        # return response.choices[0].message.content
+        return "yayyy"
     
     except openai.RateLimitError:
-        reset()
         return "Error: API request exceeded usage limits. Try again later!"
     
     except openai.AuthenticationError:
-        reset()
         return "Error: Missing API key. Try again later!"
     
     except openai.APIConnectionError:
-        reset()
         return "Error: Unstable network! Try again later!"
     
     except openai.APIError as e:
-        reset()
         return "Error: OpenAI's servers are down! Try again later!"
 
     except Exception as e:
-        reset()
         return f"Error: Unknown error has occured: {e}. Try again later!"
 
 
 def chat():
+    
     col1, col2, col3 = st.columns([0.5,2,0.5])
 
     with col2:
@@ -284,17 +281,21 @@ def chat():
                         ai_response = ai()
                         if ai_response is None:
                             ai_response = "Error: ChetGPT did not return a response. Try again later!"
-                            return()
                         st.write_stream(typewrite(ai_response))
                     st.session_state.last_ai_text = ai_response
                     st.session_state.chat = True
+
                 else:
                     with st.chat_message("human"):
                         st.write(prompt)
                     with st.chat_message("ai"):
                         st.write(st.session_state.get("last_ai_text", "")) #ai helped me with this
                     time.sleep(1)
-                st.button("RETURN", on_click=return_chat)
+
+                if "Error" in st.session_state.get("last_ai_text", ""):
+                    st.button("RETURN", on_click=reset)
+                else:
+                    st.button("RETURN", on_click=return_chat)
                 
 
 
