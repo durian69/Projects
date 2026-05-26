@@ -225,15 +225,14 @@ def main_menu():
 def ai():
     #I searched up the different errors for OpenAI, AI gave me them
     try:
-        # response = client.chat.completions.create(
-        #     model="gpt-4o",
-        #     messages=[
-        #         {"role": "system", "content": system_prompt},
-        #         {"role": "user", "content": ai_prompt}
-        #     ]
-        # )
-        # return response.choices[0].message.content
-        return "yayyy"
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": ai_prompt}
+            ]
+        )
+        return response.choices[0].message.content
     
     except openai.RateLimitError:
         return "Error: API request exceeded usage limits. Try again later!"
